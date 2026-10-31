@@ -1,0 +1,7 @@
+# dsh-qq-zone 的 bundle 层：装上插件即挂载这一行，不需要手动改 profile。
+# 插件通过 ctx.tools.register 注册原生工具（qzone_* / see_image / vision_status），
+# 不依赖 MCP 子进程，也不需要额外的 profile 补丁。
+- insert:
+    - id: dsh-qq-zone
+      name: dsh-qq-zone
+      config: {}
