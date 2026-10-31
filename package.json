@@ -1,6 +1,6 @@
 {
   "name": "dsh-qq-zone",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "type": "module",
   "description": "QQ 空间说说 + 识图：给 DSH 里的 QQ 机器人补上两条能力——发/看/删/赞/评论说说，以及把图片交给视觉模型（本地网关）或 Windows OCR 读懂。",

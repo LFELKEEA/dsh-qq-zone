@@ -69,3 +69,31 @@ test('gatewayTargets 读到 key 文件；没有 key 也能给出默认地址', (
   assert.equal(noKey[0].key, '')
   assert.equal(noKey[0].baseUrl, 'http://127.0.0.1:8326')
 })
+
+test('gatewayTargets 认通用的 OPENAI_* 变量，且抹掉地址末尾的 /v1', () => {
+  const home = tempHome()
+  const targets = gatewayTargets({
+    env: { DSH_HOME: home, OPENAI_BASE_URL: 'https://api.example.com/v1/', OPENAI_API_KEY: 'sk-generic' },
+    home,
+  })
+  assert.equal(targets[0].baseUrl, 'https://api.example.com')
+  assert.equal(targets[0].key, 'sk-generic')
+  assert.equal(targets[0].keySource, '环境变量 OPENAI_API_KEY')
+  assert.equal(targets[0].urlSource, '环境变量 OPENAI_BASE_URL')
+  // 具体变量优先于通用变量，且默认 8326 始终兜底
+  const both = gatewayTargets({
+    env: {
+      DSH_HOME: home,
+      DSH_OPENAI_GATEWAY_API_KEY: 'sk-specific',
+      OPENAI_API_KEY: 'sk-generic',
+      OPENAI_BASE_URL: 'https://api.example.com/v1',
+      DSH_OPENAI_GATEWAY_BASE: 'http://127.0.0.1:9999',
+    },
+    home,
+  })
+  assert.deepEqual(
+    both.map((item) => item.baseUrl),
+    ['http://127.0.0.1:9999', 'https://api.example.com', 'http://127.0.0.1:8326'],
+  )
+  assert.equal(both[0].key, 'sk-specific')
+})

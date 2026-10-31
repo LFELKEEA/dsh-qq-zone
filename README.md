@@ -42,7 +42,7 @@ mklink /J "$env:USERPROFILE\.dsh\plugins\dsh-qq-zone" "D:\path\to\dsh-qq-zone"
 顺序是「环境变量 → SurfCore 配置 → 已知位置 → 默认值」：
 
 - OneBot 端点：`QZONE_ONEBOT_HTTP` / `QZONE_ONEBOT_TOKEN` → SurfCore `config.json` 的 `snowluma.httpUrl` 与 `accessToken`（也会读 `~/.dsh/surfcore/config.json`）→ `http://127.0.0.1:3000`
-- 视觉网关：`DSH_OPENAI_GATEWAY_BASE` / `DSH_OPENAI_GATEWAY_PORT` / `DSH_OPENAI_GATEWAY_API_KEY` → `~/.dsh/openai-gateway/api-key` → `http://127.0.0.1:8326`
+- 视觉网关：`DSH_OPENAI_GATEWAY_BASE` / `DSH_OPENAI_GATEWAY_PORT` / `DSH_OPENAI_GATEWAY_API_KEY` → `OPENAI_BASE_URL` / `OPENAI_API_BASE` / `OPENAI_API_KEY` → `~/.dsh/openai-gateway/api-key` → `http://127.0.0.1:8326`（地址带 `/v1` 也行，会自动抹掉）
 - SurfCore 配置不在默认位置时：`SURFCORE_CONFIG=<路径>`
 
 ## 环境要求
@@ -50,7 +50,8 @@ mklink /J "$env:USERPROFILE\.dsh\plugins\dsh-qq-zone" "D:\path\to\dsh-qq-zone"
 - Windows（只有 OCR 兜底依赖系统；其余平台也能跑，只是没有 OCR）
 - DSH `>=0.2.0-rc.1 <0.3.0 || >=0.2.1-rc.1 <0.3.0`
 - SnowLuma 2.2+ 且已登录 QQ（`qzone_*` 是它提供的动作）
-- 想用识图：DSH 里至少有一个支持图片输入的模型（`vision_status` 会告诉你有没有）
+- 想用识图：机器上要有一个 **OpenAI 兼容网关**。最常见的是第三方插件 [`dsh-our-free-model`](https://github.com/Ebony-Vinyl/dsh-our-free-model)——它在 `127.0.0.1:8326` 把 DSH 里所有 provider 聚成一个出口，并把 key 写到 `~/.dsh/openai-gateway/api-key`；也可以用 `OPENAI_BASE_URL` + `OPENAI_API_KEY` 直接指向 DeepSeek/任何兼容服务。**不需要装或配置 `dsh-vision-router`**——`see_image` 不经过它。
+  - 一个网关都没有时，`see_image` 会自动退回 Windows OCR（只读文字、看不懂画面），`vision_status` 会说清缺什么。
 
 ## 在 QQ 会话里用它
 
